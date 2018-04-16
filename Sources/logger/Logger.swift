@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol LoggerListener: class {
+public protocol LoggerListener {
     func loggedFatal(text: String)
     func loggedWarning(text: String)
     func loggedSuccess(text: String)
@@ -21,7 +21,7 @@ public extension LoggerListener {
 }
 
 public class Logger {
-    private weak var listener: LoggerListener?
+    private var listener: LoggerListener?
     
     public init(listener: LoggerListener? = nil) {
         self.listener = listener
