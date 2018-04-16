@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.name             = 'logger'
   s.version          = `git describe --abbrev=0 --tags`
   s.summary          = 'Library for structuring logs'
-  s.description      = 'Library for structuring logs'
+  s.description      = 'You can print fatal, warning, success and your own log. Library add file name, line, function name and emoji for fast error finding'
   s.homepage         = 'https://github.com/lumyk/logger'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'Evgeny Kalashnikov' => 'lumyk@me.com' }
