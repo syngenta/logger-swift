@@ -5,7 +5,7 @@ You can print fatal, warning, success and your own log. Library add file name, l
 ## Examples
 
 ### Example 1 (simple use)
-```
+```swift
 import logger
 
 let logger = Logger()
@@ -16,7 +16,7 @@ logger.fatal("any object 1", "any object 2") // can be optional
 
 ### Example 2 (with listener)
 Listener can be used for sending reports to bug tracking system
-```
+```swift
 import logger
 
 let logger = Logger(listener: self)
