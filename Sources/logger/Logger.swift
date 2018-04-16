@@ -8,54 +8,54 @@
 
 import Foundation
 
-protocol LoggerListener: class {
+public protocol LoggerListener: class {
     func loggedFatal(text: String)
     func loggedWarning(text: String)
     func loggedSuccess(text: String)
     func loggedCustom(text: String)
 }
 
-extension LoggerListener {
+public extension LoggerListener {
     func loggedSuccess(text: String) { /* for optional protocoling */ }
     func loggedCustom(text: String) { /* for optional protocoling */ }
 }
 
-class Logger { 
-    weak var listener: LoggerListener?
+public class Logger {
+    private weak var listener: LoggerListener?
     
-    init(listener: LoggerListener? = nil) {
+    public init(listener: LoggerListener? = nil) {
         self.listener = listener
     }
     
-    func fatal(_ any: Any?..., filePath: String = #file, line: Int = #line, functionName: String = #function) {
+    public func fatal(_ any: Any?..., filePath: String = #file, line: Int = #line, functionName: String = #function) {
         self.log(any: any, prefix: "❌", filePath: filePath, line: line, functionName: functionName, listenerCall: self.listener?.loggedFatal)
     }
     
-    func fatal(_ any: Any..., filePath: String = #file, line: Int = #line, functionName: String = #function) {
+    public func fatal(_ any: Any..., filePath: String = #file, line: Int = #line, functionName: String = #function) {
         self.log(any: any, prefix: "❌", filePath: filePath, line: line, functionName: functionName, listenerCall: self.listener?.loggedFatal)
     }
     
-    func warning(_ any: Any?..., filePath: String = #file, line: Int = #line, functionName: String = #function) {
+    public func warning(_ any: Any?..., filePath: String = #file, line: Int = #line, functionName: String = #function) {
         self.log(any: any, prefix: "⚠️", filePath: filePath, line: line, functionName: functionName, listenerCall: self.listener?.loggedWarning)
     }
     
-    func warning(_ any: Any..., filePath: String = #file, line: Int = #line, functionName: String = #function) {
+    public func warning(_ any: Any..., filePath: String = #file, line: Int = #line, functionName: String = #function) {
         self.log(any: any, prefix: "⚠️", filePath: filePath, line: line, functionName: functionName, listenerCall: self.listener?.loggedWarning)
     }
     
-    func success(_ any: Any?..., filePath: String = #file, line: Int = #line, functionName: String = #function) {
+    public func success(_ any: Any?..., filePath: String = #file, line: Int = #line, functionName: String = #function) {
         self.log(any: any, prefix: "✅", filePath: filePath, line: line, functionName: functionName, listenerCall: self.listener?.loggedSuccess)
     }
     
-    func success(_ any: Any..., filePath: String = #file, line: Int = #line, functionName: String = #function) {
+    public func success(_ any: Any..., filePath: String = #file, line: Int = #line, functionName: String = #function) {
         self.log(any: any, prefix: "✅", filePath: filePath, line: line, functionName: functionName, listenerCall: self.listener?.loggedSuccess)
     }
     
-    func log(any: Any?..., prefix: String = "", filePath: String = #file, line: Int = #line, functionName: String = #function) {
+    public func log(any: Any?..., prefix: String = "", filePath: String = #file, line: Int = #line, functionName: String = #function) {
         self.log(any: any, prefix: prefix, filePath: filePath, line: line, functionName: functionName, listenerCall: self.listener?.loggedCustom)
     }
     
-    func log(any: Any..., prefix: String = "", filePath: String = #file, line: Int = #line, functionName: String = #function) {
+    public func log(any: Any..., prefix: String = "", filePath: String = #file, line: Int = #line, functionName: String = #function) {
         self.log(any: any, prefix: prefix, filePath: filePath, line: line, functionName: functionName, listenerCall: self.listener?.loggedCustom)
     }
 }
