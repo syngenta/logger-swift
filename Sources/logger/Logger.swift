@@ -21,47 +21,87 @@ public extension LoggerListener {
 }
 
 public class Logger {
-    private var listener: LoggerListener?
+    private static var listeners = [String : LoggerListener]()
     
-    public init(listener: LoggerListener? = nil) {
-        self.listener = listener
+    public static func register<T: LoggerListener>(listener: T) {
+        self.listeners["\(T.self)"] = listener
     }
     
-    public func fatal(_ any: Any?..., filePath: String = #file, line: Int = #line, functionName: String = #function) {
-        self.log(any: any, prefix: "❌", filePath: filePath, line: line, functionName: functionName, listenerCall: self.listener?.loggedFatal)
+    public static func removeListener<T: LoggerListener>(type: T.Type) {
+        self.listeners.removeValue(forKey: "\(T.self)")
     }
     
-    public func fatal(_ any: Any..., filePath: String = #file, line: Int = #line, functionName: String = #function) {
-        self.log(any: any, prefix: "❌", filePath: filePath, line: line, functionName: functionName, listenerCall: self.listener?.loggedFatal)
+    public static func removeAllListeners() {
+        self.listeners.removeAll()
     }
     
-    public func warning(_ any: Any?..., filePath: String = #file, line: Int = #line, functionName: String = #function) {
-        self.log(any: any, prefix: "⚠️", filePath: filePath, line: line, functionName: functionName, listenerCall: self.listener?.loggedWarning)
+    public static func fatal(_ any: Any?..., filePath: String = #file, line: Int = #line, functionName: String = #function) {
+        self.log(any: any, prefix: "❌", filePath: filePath, line: line, functionName: functionName, listenerCall: { text in
+            self.listeners.forEach({ (listener) in
+                listener.value.loggedFatal(text: text)
+            })
+        })
     }
     
-    public func warning(_ any: Any..., filePath: String = #file, line: Int = #line, functionName: String = #function) {
-        self.log(any: any, prefix: "⚠️", filePath: filePath, line: line, functionName: functionName, listenerCall: self.listener?.loggedWarning)
+    public static func fatal(_ any: Any..., filePath: String = #file, line: Int = #line, functionName: String = #function) {
+        self.log(any: any, prefix: "❌", filePath: filePath, line: line, functionName: functionName, listenerCall: { text in
+            self.listeners.forEach({ (listener) in
+                listener.value.loggedFatal(text: text)
+            })
+        })
     }
     
-    public func success(_ any: Any?..., filePath: String = #file, line: Int = #line, functionName: String = #function) {
-        self.log(any: any, prefix: "✅", filePath: filePath, line: line, functionName: functionName, listenerCall: self.listener?.loggedSuccess)
+    public static func warning(_ any: Any?..., filePath: String = #file, line: Int = #line, functionName: String = #function) {
+        self.log(any: any, prefix: "⚠️", filePath: filePath, line: line, functionName: functionName, listenerCall: { text in
+            self.listeners.forEach({ (listener) in
+                listener.value.loggedWarning(text: text)
+            })
+        })
     }
     
-    public func success(_ any: Any..., filePath: String = #file, line: Int = #line, functionName: String = #function) {
-        self.log(any: any, prefix: "✅", filePath: filePath, line: line, functionName: functionName, listenerCall: self.listener?.loggedSuccess)
+    public static func warning(_ any: Any..., filePath: String = #file, line: Int = #line, functionName: String = #function) {
+        self.log(any: any, prefix: "⚠️", filePath: filePath, line: line, functionName: functionName, listenerCall: { text in
+            self.listeners.forEach({ (listener) in
+                listener.value.loggedWarning(text: text)
+            })
+        })
     }
     
-    public func log(any: Any?..., prefix: String = "", filePath: String = #file, line: Int = #line, functionName: String = #function) {
-        self.log(any: any, prefix: prefix, filePath: filePath, line: line, functionName: functionName, listenerCall: self.listener?.loggedCustom)
+    public static func success(_ any: Any?..., filePath: String = #file, line: Int = #line, functionName: String = #function) {
+        self.log(any: any, prefix: "✅", filePath: filePath, line: line, functionName: functionName, listenerCall: { text in
+            self.listeners.forEach({ (listener) in
+                listener.value.loggedSuccess(text: text)
+            })
+        })
     }
     
-    public func log(any: Any..., prefix: String = "", filePath: String = #file, line: Int = #line, functionName: String = #function) {
-        self.log(any: any, prefix: prefix, filePath: filePath, line: line, functionName: functionName, listenerCall: self.listener?.loggedCustom)
+    public static func success(_ any: Any..., filePath: String = #file, line: Int = #line, functionName: String = #function) {
+        self.log(any: any, prefix: "✅", filePath: filePath, line: line, functionName: functionName, listenerCall: { text in
+            self.listeners.forEach({ (listener) in
+                listener.value.loggedSuccess(text: text)
+            })
+        })
+    }
+    
+    public static func log(any: Any?..., prefix: String = "", filePath: String = #file, line: Int = #line, functionName: String = #function) {
+        self.log(any: any, prefix: prefix, filePath: filePath, line: line, functionName: functionName, listenerCall: { text in
+            self.listeners.forEach({ (listener) in
+                listener.value.loggedCustom(text: text)
+            })
+        })
+    }
+    
+    public static func log(any: Any..., prefix: String = "", filePath: String = #file, line: Int = #line, functionName: String = #function) {
+        self.log(any: any, prefix: prefix, filePath: filePath, line: line, functionName: functionName, listenerCall: { text in
+            self.listeners.forEach({ (listener) in
+                listener.value.loggedCustom(text: text)
+            })
+        })
     }
 }
 
 private extension Logger {
-    func log(any: [Any?], prefix: String = "", filePath: String = #file, line: Int = #line, functionName: String = #function, listenerCall: ((_ text: String) -> Void)?) {
+    static func log(any: [Any?], prefix: String = "", filePath: String = #file, line: Int = #line, functionName: String = #function, listenerCall: ((_ text: String) -> Void)?) {
         let anys = any.compactMap { String(describing: $0) }.joined(separator: " | ")
         let fileName = URL(fileURLWithPath: filePath).lastPathComponent
         let text = "\(prefix) \(fileName):\(line) \(functionName) — \(anys)"
@@ -69,7 +109,7 @@ private extension Logger {
         print(text)
     }
     
-    func log(any: [Any], prefix: String = "", filePath: String = #file, line: Int = #line, functionName: String = #function, listenerCall: ((_ text: String) -> Void)?) {
+    static func log(any: [Any], prefix: String = "", filePath: String = #file, line: Int = #line, functionName: String = #function, listenerCall: ((_ text: String) -> Void)?) {
         let anys = any.compactMap { String(describing: $0) }.joined(separator: " | ")
         let fileName = URL(fileURLWithPath: filePath).lastPathComponent
         let text = "\(prefix) \(fileName):\(line) \(functionName) — \(anys)"
