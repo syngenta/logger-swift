@@ -162,7 +162,8 @@ public class Logger {
                            filePath: String = #file,
                            line: Int = #line,
                            functionName: String = #function,
-                           notify: Bool) {
+                           notify: Bool = true) {
+
         self.log(
             any: any,
             prefix: prefix,
@@ -177,7 +178,13 @@ public class Logger {
         )
     }
 
-    public static func log(any: Any..., prefix: String = "", filePath: String = #file, line: Int = #line, functionName: String = #function, notify: Bool) {
+    public static func log(any: Any...,
+                           prefix: String = "",
+                           filePath: String = #file,
+                           line: Int = #line,
+                           functionName: String = #function,
+                           notify: Bool = true) {
+
         self.log(
             any: any,
             prefix: prefix,
